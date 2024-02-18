@@ -10,49 +10,56 @@ public struct NameFlowView: View {
   
   public var body: some View {
     WithPerceptionTracking {
-      Group {
-        switch self.store.root {
-        case .name:
-          if let store = self.store.scope(
-            state: \.root.name,
-            action: \.root.name
-          ) {
-            NameView(store: store)
-          }
-          
-        case .nameCompletion:
-          if let store = self.store.scope(
-            state: \.root.nameCompletion,
-            action: \.root.nameCompletion
-          ) {
-            NameCompletionView(store: store)
-          }
-          
-        case .surname:
-          if let store = self.store.scope(
-            state: \.root.surname,
-            action: \.root.surname
-          ) {
-            SurnameView(store: store)
-          }
+      PanelPair(
+        leftPage: NameFlow.Page.name,
+        selectedPage: store.selectedPage,
+        leftContent: {
+          NameView(
+            store: store.scope(
+              state: \.name,
+              action: \.name
+            )
+          )
+        },
+        rightContent: {
+          PanelPair(
+            leftPage: NameFlow.Page.surname,
+            selectedPage: store.selectedPage,
+            leftContent: {
+              SurnameView(
+                store: store.scope(
+                  state: \.surname,
+                  action: \.surname
+                )
+              )
+            },
+            rightContent: {
+              NameCompletionView(
+                store: store.scope(
+                  state: \.nameCompletion,
+                  action: \.nameCompletion
+                )
+              )
+            }
+          )
         }
-      }
-      .animation(.easeInOut, value: store.root)
-      .transition(
-        .asymmetric(
-          insertion: .move(edge: .trailing),
-          removal: .move(edge: .leading)
-        )
       )
+      .animation(.easeInOut, value: store.selectedPage)
     }
   }
 }
 
 #Preview {
-  NameFlowView(
-    store: Store(
-      initialState: NameFlow.State(name: "")) {
+  NavigationView {
+    NameFlowView(
+      store: Store(
+        initialState: NameFlow.State(
+          name: "Test_Name",
+          surname: "Test_Surname"
+        )
+      ) {
         NameFlow()
       }
-  )
+    )
+  }
 }

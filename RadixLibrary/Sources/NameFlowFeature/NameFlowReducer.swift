@@ -3,91 +3,82 @@ import Foundation
 
 @Reducer
 public struct NameFlow {
+  enum Page: Int, Comparable {
+    case name
+    case surname
+    case nameCompletion
+    
+    static func < (lhs: Page, rhs: Page) -> Bool {
+      lhs.rawValue < rhs.rawValue
+    }
+  }
+  
   @ObservableState
   public struct State: Equatable {
-    var root: Root.State
-    public var name = ""
-    public var surname = ""
+    var name: Name.State
+    var nameCompletion = NameCompletion.State()
+    var surname: Surname.State
+    var selectedPage = Page.name
     
-    public init(name: String) {
-      self.name = name
-      self.root = .name(Name.State(name: name))
+    public var userName: String {
+      name.name
+    }
+    
+    public var userSurname: String {
+      surname.surname
+    }
+    
+    public init(name: String, surname: String) {
+      self.name = Name.State(name: name)
+      self.surname = Surname.State(surname: surname)
     }
   }
   
   public enum Action {
-    case root(Root.Action)
+    case name(Name.Action)
+    case nameCompletion(NameCompletion.Action)
+    case surname(Surname.Action)
   }
       
   public init() {}
   
   public var body: some ReducerOf<Self> {
-    Scope(state: \.root, action: \.root) {
-      Root()
+    Scope(state: \.name, action: \.name) {
+      Name()
+    }
+    Scope(state: \.nameCompletion, action: \.nameCompletion) {
+      NameCompletion()
+    }
+    Scope(state: \.surname, action: \.surname) {
+      Surname()
     }
     Reduce { state, action in
       switch action {
-      case .root(.name(.onProceedTapped)):
-        state.root = .surname(Surname.State(surname: state.surname))
+      case .name(.onProceedTapped):
+        state.selectedPage = .surname
         return .none
         
-      case .root(.name(.binding)):
-        state.name = state.root.name?.name ?? ""
+      case .name:
         return .none
         
-      case .root(.name):
+      case .nameCompletion(.backButtonTapped):
+        state.selectedPage = .surname
         return .none
         
-      case .root(.nameCompletion(.backButtonTapped)):
-        state.root = .surname(Surname.State(surname: state.surname))
+      case .nameCompletion:
         return .none
         
-      case .root(.nameCompletion):
+      case .surname(.backButtonTapped):
+        state.selectedPage = .name
         return .none
         
-      case .root(.surname(.onProceedTapped)):
-        state.root = .nameCompletion(NameCompletion.State())
+      case .surname(.onProceedTapped):
+        state.selectedPage = .nameCompletion
         return .none
         
-      case .root(.surname(.backButtonTapped)):
-        state.root = .name(Name.State(name: state.name))
-        return .none
-        
-      case .root(.surname(.binding)):
-        state.surname = state.root.surname?.surname ?? ""
-        return .none
-
-      case .root(.surname):
+      case .surname:
         return .none
       }
     }
-  }
-    
-  @Reducer
-  public struct Root {
-    @ObservableState
-    public enum State: Equatable {
-      case name(Name.State)
-      case nameCompletion(NameCompletion.State)
-      case surname(Surname.State)
-    }
-
-    public enum Action {
-      case name(Name.Action)
-      case nameCompletion(NameCompletion.Action)
-      case surname(Surname.Action)
-    }
-
-    public var body: some Reducer<State, Action> {
-      Scope(state: \.name, action: \.name) {
-        Name()
-      }
-      Scope(state: \.nameCompletion, action: \.nameCompletion) {
-        NameCompletion()
-      }
-      Scope(state: \.surname, action: \.surname) {
-        Surname()
-      }
-    }
-  }
+  }    
 }

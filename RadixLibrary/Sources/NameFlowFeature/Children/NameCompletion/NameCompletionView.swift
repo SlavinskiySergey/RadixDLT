@@ -23,7 +23,7 @@ public struct NameCompletionView: View {
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
           BackButton {
-            store.send(.backButtonTapped)
+            store.send(.backButtonTapped, animation: .default)
           }
         }
       }

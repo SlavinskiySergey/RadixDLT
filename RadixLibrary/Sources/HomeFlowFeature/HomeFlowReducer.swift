@@ -35,15 +35,15 @@ public struct HomeFlow {
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
-      case .destination(.presented(.nameFlow(.root(.nameCompletion(.onProceedTapped))))):
+      case .destination(.presented(.nameFlow(.nameCompletion(.onProceedTapped)))):
         guard case let .some(.nameFlow(nameFlowState)) = state.destination
         else { return .none }
         
         let birthdate = state.user.birthdate
         state.user = User(
           birthdate: birthdate,
-          name: nameFlowState.name,
-          surname: nameFlowState.surname
+          name: nameFlowState.userName,
+          surname: nameFlowState.userSurname
         )
         state.destination = nil
         userDefaultsClient.create(model: state.user)
@@ -54,8 +54,10 @@ public struct HomeFlow {
         return .none
         
       case .onChangeNameTapped:
-        var nameFlow = NameFlow.State(name: state.user.name)
-        nameFlow.surname = state.user.surname
+        let nameFlow = NameFlow.State(
+          name: state.user.name,
+          surname: state.user.surname
+        )
         state.destination = .nameFlow(nameFlow)
         return .none
       }

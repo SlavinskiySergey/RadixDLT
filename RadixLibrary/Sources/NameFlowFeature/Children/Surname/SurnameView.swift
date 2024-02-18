@@ -16,7 +16,7 @@ public struct SurnameView: View {
           .autocorrectionDisabled()
         
         Button("Proceed") {
-          store.send(.onProceedTapped)
+          store.send(.onProceedTapped, animation: .default)
         }
         .buttonStyle(.borderedProminent)
         .disabled(!store.isProceedEnabled)
@@ -26,7 +26,7 @@ public struct SurnameView: View {
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
           BackButton {
-            store.send(.backButtonTapped)
+            store.send(.backButtonTapped, animation: .default)
           }
         }
       }

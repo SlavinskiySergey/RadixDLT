@@ -39,22 +39,22 @@ public struct OnboardingFlow {
         
         let diffComponents = Calendar.current.dateComponents([.year], from: birthdateState.date, to: Date())
         if let year = diffComponents.year, year >= 18 {
-          state.path.append(.nameFlow(NameFlow.State(name: "")))
+          state.path.append(.nameFlow(NameFlow.State(name: "", surname: "")))
         } else {
           state.path.append(.onboardingCompletion(OnboardingCompletion.State()))
         }
 
         return .none
         
-      case let .path(.element(id, .nameFlow(.root(.nameCompletion(.onProceedTapped))))):
+      case let .path(.element(id, .nameFlow(.nameCompletion(.onProceedTapped)))):
         guard case let .some(.nameFlow(nameFlowState)) = state.path[id: id],
               let birthdate = state.user?.birthdate
         else { return .none }
         
         state.user = User(
           birthdate: birthdate,
-          name: nameFlowState.name,
-          surname: nameFlowState.surname
+          name: nameFlowState.userName,
+          surname: nameFlowState.userSurname
         )
         
         state.path.append(.onboardingCompletion(OnboardingCompletion.State()))

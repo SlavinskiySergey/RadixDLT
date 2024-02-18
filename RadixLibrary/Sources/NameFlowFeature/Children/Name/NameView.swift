@@ -16,7 +16,7 @@ public struct NameView: View {
           .autocorrectionDisabled()
         
         Button("Proceed") {
-          store.send(.onProceedTapped)
+          store.send(.onProceedTapped, animation: .default)
         }
         .buttonStyle(.borderedProminent)
         .disabled(!store.isProceedEnabled)
