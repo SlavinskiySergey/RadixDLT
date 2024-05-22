@@ -9,7 +9,7 @@ let project = Project(
       dependencies: [
         .appArchitecture,
         .feature(.homeFlow),
-        .feature(.onboardingCompletion),
+        .feature(.onboardingFlow),
         .feature(.splash)
       ]
     )

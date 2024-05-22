@@ -11,7 +11,6 @@ private func makeBundleID(with addition: String) -> String {
 extension Target {
   public static func makeApp(
     name: String,
-    sources: ProjectDescription.SourceFilesList,
     dependencies: [ProjectDescription.TargetDependency]
   ) -> Target {
     .target(
@@ -21,7 +20,7 @@ extension Target {
       bundleId: makeBundleID(with: ".app"),
       deploymentTargets: deploymentTarget,
       infoPlist: .extendingDefault(with: infoPlistExtension),
-      sources: sources,
+      sources: ["src/**"],
       dependencies: dependencies
     )
   }

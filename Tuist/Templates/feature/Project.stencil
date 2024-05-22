@@ -1,0 +1,14 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project(
+  name: Module.{{ name }}.rawValue,
+  targets: [
+    .feature(
+      implementation: .{{ name }},
+      dependencies: [
+        .appArchitecture
+      ]
+    )
+  ]
+)
