@@ -10,40 +10,37 @@ public struct NameFlowView: View {
   
   public var body: some View {
     WithPerceptionTracking {
-      PanelPair(
-        leftPage: NameFlow.Page.name,
-        selectedPage: store.selectedPage,
-        leftContent: {
-          NameView(
-            store: store.scope(
-              state: \.name,
-              action: \.name
+      PageView {
+        PageTab(
+          isLeftActive: store.selectedPage <= .nameCompletion) {
+            NameCompletionView(
+              store: store.scope(
+                state: \.nameCompletion,
+                action: \.nameCompletion
+              )
             )
-          )
-        },
-        rightContent: {
-          PanelPair(
-            leftPage: NameFlow.Page.surname,
-            selectedPage: store.selectedPage,
-            leftContent: {
-              SurnameView(
-                store: store.scope(
-                  state: \.surname,
-                  action: \.surname
-                )
+          }
+        
+        PageTab(
+          isLeftActive: store.selectedPage <= .surname) {
+            SurnameView(
+              store: store.scope(
+                state: \.surname,
+                action: \.surname
               )
-            },
-            rightContent: {
-              NameCompletionView(
-                store: store.scope(
-                  state: \.nameCompletion,
-                  action: \.nameCompletion
-                )
+            )
+          }
+        
+        PageTab(
+          isLeftActive: store.selectedPage <= .name) {
+            NameView(
+              store: store.scope(
+                state: \.name,
+                action: \.name
               )
-            }
-          )
-        }
-      )
+            )
+          }
+      }
       .animation(.easeInOut, value: store.selectedPage)
     }
   }
